@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Segoe UI" Size="9" />
+  <Class Name="Raccoom.Xml.Atom.AtomFeed" Collapsed="true">
+    <Position X="0.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Atom\Feed.cs</FileName>
+      <HashCode>AAAiFkAAAIBQRGEABADAAsALBARAUBAASIKAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Struct Name="Raccoom.Xml.Atom.AtomFeed.Fields" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Atom\Feed.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Raccoom.Xml.Atom.AtomEntry" Collapsed="true">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Atom\Entry.cs</FileName>
+      <HashCode>AACgBAAAAIBAAEAAAAAAAIAbAABAgAAAEAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Struct Name="Raccoom.Xml.Atom.AtomEntry.Fields" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Atom\Entry.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Raccoom.Xml.Atom.AtomContentConstruct" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Atom\AtomContentConstruct.cs</FileName>
+      <HashCode>ABAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAQAgAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Type" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Raccoom.Xml.Atom.AtomCommonAttributes" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Atom\AtomCommonAttributes.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAQEgAAEAAAQAAAAAAQAEQAIAAAAIAA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Raccoom.Xml.Atom.AtomPersonConstruct" Collapsed="true">
+    <Position X="2.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Atom\AtomPersonConstruct.cs</FileName>
+      <HashCode>AAAAIAAAACAAAAABAAAAAAQAACAAAAAACAgAAAAAAAE=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Raccoom.Xml.Atom.AtomCategory" Collapsed="true">
+    <Position X="4.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Atom\Category.cs</FileName>
+      <HashCode>AAAAAAAUEAAAAAAABBAAAAAEAAAIAAAAEAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Raccoom.Xml.Atom.AtomGenerator" Collapsed="true">
+    <Position X="6" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Atom\Generator.cs</FileName>
+      <HashCode>IAAAAAAAAAAAIAAAAAAAAAAAACAAAAAACAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Raccoom.Xml.Atom.AtomContentType" Collapsed="true">
+    <Position X="0.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Atom\Types.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABCAAAAAACAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Enum>
+</ClassDiagram>

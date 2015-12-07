@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="channel" nillable="true" type="channel" />
+  <xs:complexType name="channel">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="title" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="description" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="link" type="xs:anyURI" />
+      <xs:element minOccurs="0" maxOccurs="1" name="language" type="xs:language" />
+      <xs:element minOccurs="0" maxOccurs="1" name="copyright" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="managingEditor" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="webMaster" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="pubDate" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="lastBuildDate" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="category" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="generator" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="docs" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="cloud" type="cloud" />
+      <xs:element minOccurs="0" maxOccurs="1" name="ttl" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" name="image" type="image" />
+      <xs:element minOccurs="0" maxOccurs="1" name="rating" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="textInput" type="textInput" />
+      <xs:element minOccurs="0" maxOccurs="1" name="skipDays" type="ArrayOfString" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="item" type="RssItem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cloud">
+    <xs:attribute name="domain" type="xs:string" />
+    <xs:attribute name="port" type="xs:int" />
+    <xs:attribute name="path" type="xs:string" />
+    <xs:attribute name="registerProcedure" type="xs:string" />
+    <xs:attribute default="None" name="protocol" type="CloudProtocol" />
+  </xs:complexType>
+  <xs:simpleType name="CloudProtocol">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="XmlRpc" />
+      <xs:enumeration value="HttpPost" />
+      <xs:enumeration value="Soap" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="image">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="title" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="url" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="link" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="description" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" default="88" name="width" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" default="31" name="height" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="textInput">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="title" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="description" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="link" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfString">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="day" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="RssItem">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="title" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="description" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="link" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="author" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="category" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="pubDate" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="comments" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="enclosure" type="enclosure" />
+      <xs:element minOccurs="0" maxOccurs="1" name="guid" type="guid" />
+      <xs:element minOccurs="0" maxOccurs="1" name="source" type="source" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="enclosure">
+    <xs:attribute name="url" type="xs:anyURI" />
+    <xs:attribute name="length" type="xs:int" />
+    <xs:attribute name="type" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="guid">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="isPermaLink" type="xs:boolean" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="source">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="url" type="xs:string" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>

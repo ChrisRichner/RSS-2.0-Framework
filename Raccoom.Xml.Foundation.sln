@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EBD65387-CDDE-42CD-BB78-0799BB4D9E6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Specs", "Specs", "{20B1E1A8-C96C-449E-8371-07DE8A88241A}"
+	ProjectSection(SolutionItems) = preProject
+		OPML 2.pdf = OPML 2.pdf
+		RFC 4287 The Atom Syndication Format.xps = RFC 4287 The Atom Syndication Format.xps
+		RSS 2.pdf = RSS 2.pdf
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raccoom.Xml", "Xml\Raccoom.Xml.csproj", "{5CAAE842-11D7-42F8-9C81-096252F57C76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raccoom.Xml.UnitTest", "Xml.UnitTest\Raccoom.Xml.UnitTest.csproj", "{BBB51354-C006-4114-8F94-900904D0DB56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raccoom.Xml.Demo", "Demo\Raccoom.Xml.Demo.csproj", "{CB3564BC-B9DB-4ADC-93D7-36E1CE1DCB65}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5CAAE842-11D7-42F8-9C81-096252F57C76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CAAE842-11D7-42F8-9C81-096252F57C76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CAAE842-11D7-42F8-9C81-096252F57C76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CAAE842-11D7-42F8-9C81-096252F57C76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBB51354-C006-4114-8F94-900904D0DB56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBB51354-C006-4114-8F94-900904D0DB56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBB51354-C006-4114-8F94-900904D0DB56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBB51354-C006-4114-8F94-900904D0DB56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB3564BC-B9DB-4ADC-93D7-36E1CE1DCB65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB3564BC-B9DB-4ADC-93D7-36E1CE1DCB65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB3564BC-B9DB-4ADC-93D7-36E1CE1DCB65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB3564BC-B9DB-4ADC-93D7-36E1CE1DCB65}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{20B1E1A8-C96C-449E-8371-07DE8A88241A} = {EBD65387-CDDE-42CD-BB78-0799BB4D9E6B}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,2479 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Raccoom.Xml.Foundation</name>
+    </assembly>
+    <members>
+        <member name="T:Raccoom.Xml.Atom.AtomCommonAttributes">
+            <summary>
+            atomCommonAttributes =
+            attribute xml:base { atomUri }?,
+            attribute xml:lang { atomLanguageTag }?,
+            undefinedAttribute*
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomContentConstruct">
+            <summary>
+            A Text construct contains human-readable text, usually in small
+            quantities.  The content of Text constructs is Language-Sensitive.
+            <para><![CDATA[
+            atomPlainTextConstruct =
+               atomCommonAttributes,
+               attribute type { "text" | "html" }?,
+               text
+            </para><para>
+            atomXHTMLTextConstruct =
+               atomCommonAttributes,
+               attribute type { "xhtml" },
+               xhtmlDiv]]>
+            </para><para>
+            atomTextConstruct = atomPlainTextConstruct | atomXHTMLTextConstruct
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomContentConstruct.Type">
+            <summary>
+            Text constructs MAY have a "type" attribute.  When present, the value
+            MUST be one of "text", "html", or "xhtml".  If the "type" attribute
+            is not provided, Atom Processors MUST behave as though it were
+            present with a value of "text".  Unlike the atom:content element
+            defined in Section 4.1.3, MIME media types [MIMEREG] MUST NOT be used
+            as values for the "type" attribute on Text constructs. 
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomContentConstruct.Value">
+            <summary>
+            Example atom:title with text content:
+            ...
+            <example><![CDATA[<title type="text">
+              Less: &lt;
+            </title>]]></example>
+            ...
+            <para>
+            If the value is "text", the content of the Text construct MUST NOT
+            contain child elements.  Such text is intended to be presented to
+            humans in a readable fashion.  Thus, Atom Processors MAY collapse
+            white space (including line breaks) and display the text using
+            typographic techniques such as justification and proportional fonts.
+            </para>
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomSyndicationObjectBase">
+            <summary>
+            Serves as base class for all syndication related classes (<see cref="T:Raccoom.Xml.Atom.AtomFeed"/>,<see cref="T:Raccoom.Xml.Atom.AtomEntry"/>) and defines the most common interface and features.
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomSyndicationObjectBase.Authors">
+            <summary>
+            The "atom:author" element is a Person construct that indicates the
+            author of the entry or feed.
+            <para>
+            atomAuthor = element atom:author { atomPersonConstruct }
+            </para><para>
+            If an atom:entry element does not contain atom:author elements, then
+            the atom:author elements of the contained atom:source element are
+            considered to apply.  In an Atom Feed OpmlDocument, the atom:author
+            elements of the containing atom:feed element are considered to apply
+            to the entry if there are no atom:author elements in the locations
+            described above.
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomSyndicationObjectBase.Categories">
+            <summary>
+            The "atom:category" element conveys information about a category
+            associated with an entry or feed.  This specification assigns no
+            meaning to the content (if any) of this element.
+            <para><![CDATA[
+            atomCategory =
+               element atom:category {
+                  atomCommonAttributes,
+                  attribute term { text },
+                  attribute scheme { atomUri }?,
+                  attribute label { text }?,
+                  undefinedContent
+               }]]>
+            </para>
+            </summary>
+            <remarks>
+            .2.1.  The "term" Attribute
+            <para>
+            The "term" attribute is a string that identifies the category to
+            which the entry or feed belongs.  RssCategory elements MUST have a
+            "term" attribute.
+            </para><para>
+            .2.2.  The "scheme" Attribute
+            </para><para>
+            The "scheme" attribute is an IRI that identifies a categorization
+            scheme.  RssCategory elements MAY have a "scheme" attribute.
+            </para><para>
+            .2.3.  The "label" Attribute
+            </para><para>
+            The "label" attribute provides a human-readable label for display in
+            end-user applications.  The content of the "label" attribute is
+            Language-Sensitive.  Entities such as "&amp;" and "&lt;" represent<![CDATA[
+            their corresponding characters ("&" and "<", respectively), not
+            markup.  RssCategory elements MAY have a "label" attribute.]]>
+            </para>
+            </remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomSyndicationObjectBase.Contributors">
+            <summary>
+             The "atom:contributor" element is a Person construct that indicates a
+            person or other entity who contributed to the entry or feed.
+            <para>
+            atomContributor = element atom:contributor { atomPersonConstruct }
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomSyndicationObjectBase.Id">
+            <summary>
+            The "atom:id" element conveys a permanent, universally unique
+            identifier for an entry or feed.
+            <para>
+            atomId = element atom:id {
+               atomCommonAttributes,
+               (atomUri)
+            }
+            </para><para>
+            Its content MUST be an IRI, as defined by [RFC3987].  Note that the
+            definition of "IRI" excludes relative references.  Though the IRI
+            might use a dereferencable scheme, Atom Processors MUST NOT assume it
+            can be dereferenced.        
+            </para><para>
+            When an Atom OpmlDocument is relocated, migrated, syndicated,
+            republished, exported, or imported, the content of its atom:id
+            element MUST NOT change.  Put another way, an atom:id element
+            pertains to all instantiations of a particular Atom entry or feed;
+            revisions retain the same content in their atom:id elements.  It is
+            suggested that the atom:id element be stored along with the
+            associated resource.
+            </para><para>
+            The content of an atom:id element MUST be created in a way that
+            assures uniqueness.
+            </para><para>
+            Because of the risk of confusion between IRIs that would be
+            equivalent if they were mapped to URIs and dereferenced, the
+            following normalization strategy SHOULD be applied when generating
+            atom:id elements:
+            </para><para>
+            <list type="bullet">
+            <item>Provide the scheme in lowercase characters.
+            </item><item>Provide the host, if any, in lowercase characters.
+            </item><item>Only perform percent-encoding where it is essential.
+            </item><item>Use uppercase A through F characters when percent-encoding.
+            </item><item>Prevent dot-segments from appearing in paths.
+            </item><item>For schemes that define a default authority, use an empty
+               authority if the default is desired.
+            </item><item>For schemes that define an empty path to be equivalent to a path
+               of "/", use "/".
+            </item><item>For schemes that define a port, use an empty port if the default
+               is desired.
+            </item><item>Preserve empty fragment identifiers and queries.
+            </item><item>Ensure that all components of the IRI are appropriately character
+               normalized, e.g., by using NFC or NFKC.</item></list>
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomSyndicationObjectBase.Links">
+            <summary>
+            The "atom:link" element defines a reference from an entry or feed to
+            a Web resource.  This specification assigns no meaning to the content
+            (if any) of this element.
+            <para><![CDATA[
+            atomLink =
+               element atom:link {
+                  atomCommonAttributes,
+                  attribute href { atomUri },
+                  attribute rel { atomNCName | atomUri }?,
+                  attribute type { atomMediaType }?,
+                  attribute hreflang { atomLanguageTag }?,
+                  attribute title { text }?,
+                  attribute length { text }?,
+                  undefinedContent
+               }]]>
+            </para>
+            </summary>
+            <remarks>
+            .7.1.  The "href" Attribute
+            <para>
+            The "href" attribute contains the link's IRI. atom:link elements MUST
+            have an href attribute, whose value MUST be a IRI reference
+            [RFC3987].
+            </para><para>
+            .7.2.  The "rel" Attribute
+            </para><para>
+            atom:link elements MAY have a "rel" attribute that indicates the link
+            relation type.  If the "rel" attribute is not present, the link
+            element MUST be interpreted as if the link relation type is
+            "alternate".
+            </para><para>
+            The value of "rel" MUST be a string that is non-empty and matches
+            either the "isegment-nz-nc" or the "IRI" production in [RFC3987].
+            Note that use of a relative reference other than a simple name is not
+            allowed.  If a name is given, implementations MUST consider the link
+            relation type equivalent to the same name registered within the IANA
+            </para><para>
+            Registry of Link Relations (Section 7), and thus to the IRI that
+            would be obtained by appending the value of the rel attribute to the
+            string "http://www.iana.org/assignments/relation/".  The value of
+            "rel" describes the meaning of the link, but does not impose any
+            behavioral requirements on Atom Processors.
+            </para><para>
+            This document defines five initial values for the Registry of Link
+            Relations:
+            </para><para>
+            1.  The value "alternate" signifies that the IRI in the value of the
+                href attribute identifies an alternate version of the resource
+                described by the containing element.
+            </para><para>
+            2.  The value "related" signifies that the IRI in the value of the
+                href attribute identifies a resource related to the resource
+                described by the containing element.  For example, the feed for a
+                site that discusses the performance of the search engine at
+                "http://search.example.com" might contain, as a child of
+                atom:feed:
+            </para><para>
+                <link rel="related" href="http://search.example.com/"/>
+            </para><para>
+                An identical link might appear as a child of any atom:entry whose
+                content contains a discussion of that same search engine.
+            </para><para>
+            3.  The value "self" signifies that the IRI in the value of the href
+                attribute identifies a resource equivalent to the containing
+                element.
+            </para><para>
+            4.  The value "enclosure" signifies that the IRI in the value of the
+                href attribute identifies a related resource that is potentially
+                large in size and might require special handling.  For atom:link
+                elements with rel="enclosure", the length attribute SHOULD be
+                provided.
+            </para><para>
+            5.  The value "via" signifies that the IRI in the value of the href
+                attribute identifies a resource that is the source of the
+                information provided in the containing element.
+            </para><para>
+            .7.3.  The "type" Attribute
+            </para><para>
+            On the link element, the "type" attribute's value is an advisory
+            media type: it is a hint about the type of the representation that is
+            expected to be returned when the value of the href attribute is
+            dereferenced.  Note that the type attribute does not override the
+            actual media type returned with the representation.  Link elements
+            MAY have a type attribute, whose value MUST conform to the syntax of
+            a MIME media type [MIMEREG].       
+            </para><para>
+            .7.4.  The "hreflang" Attribute
+            </para><para>
+            The "hreflang" attribute's content describes the language of the
+            resource pointed to by the href attribute.  When used together with
+            the rel="alternate", it implies a translated version of the entry.
+            Link elements MAY have an hreflang attribute, whose value MUST be a
+            language tag [RFC3066].
+            </para><para>
+            .7.5.  The "title" Attribute
+            </para><para>
+            The "title" attribute conveys human-readable information about the
+            link.  The content of the "title" attribute is Language-Sensitive.
+            Entities such as "&amp;" and "&lt;" represent their corresponding
+            <![CDATA[characters ("&" and "<",]]> respectively), not markup.  Link elements
+            MAY have a title attribute.
+            </para><para>
+            .7.6.  The "length" Attribute
+            </para><para>
+            The "length" attribute indicates an advisory length of the linked
+            content in octets; it is a hint about the content length of the
+            representation returned when the IRI in the href attribute is mapped
+            to a URI and dereferenced.  Note that the length attribute does not
+            override the actual content length of the representation as reported
+            by the underlying protocol.  Link elements MAY have a length
+            attribute.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomSyndicationObjectBase.Rights">
+            <summary>
+            The "atom:rights" element is a Text construct that conveys
+            information about rights held in and over an entry or feed.
+            <para>
+            atomRights = element atom:rights { atomTextConstruct }
+            </para><para>
+            The atom:rights element SHOULD NOT be used to convey machine-readable
+            licensing information.
+            </para><para>
+            If an atom:entry element does not contain an atom:rights element,
+            then the atom:rights element of the containing atom:feed element, if
+            present, is considered to apply to the entry.
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomSyndicationObjectBase.SubTitle">
+            <summary>
+            The "atom:subtitle" element is a Text construct that conveys a human-
+            readable description or subtitle for a feed.
+            <para>
+            atomSubtitle = element atom:subtitle { atomTextConstruct }
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomSyndicationObjectBase.Title">
+            <summary>
+            The "atom:title" element is a Text construct that conveys a human-
+            readable title for an entry or feed.
+            <para>
+            atomTitle = element atom:title { atomTextConstruct }
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomSyndicationObjectBase.Updated">
+            <summary>
+            The "atom:updated" element is a Date construct indicating the most
+            recent instant in time when an entry or feed was modified in a way
+            the publisher considers significant.  Therefore, not all
+            modifications necessarily result in a changed atom:updated value.
+            <para>
+            atomUpdated = element atom:updated { atomDateConstruct }
+            </para><para>
+            Publishers MAY change the value of this element over time.
+            </para><para>
+            </para>
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomSyndicationObjectBase.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomPersonConstruct">
+            <summary>
+            A Person construct is an element that describes a person,
+            corporation, or similar entity (hereafter, 'person').
+            <para><![CDATA[
+            atomPersonConstruct =
+               atomCommonAttributes,
+               (element atom:name { text }
+                & element atom:uri { atomUri }?
+                & element atom:email { atomEmailAddress }?
+                & extensionElement*)]]>
+            </para><para>
+            This specification assigns no significance to the order of appearance
+            of the child elements in a Person construct.  Person constructs allow
+            extension Metadata elements 
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomPersonConstruct.Email">
+            <summary>
+            The "atom:email" element's content conveys an e-mail address
+            associated with the person.  Person constructs MAY contain an
+            atom:email element, but MUST NOT contain more than one.  Its content
+            MUST conform to the "addr-spec" production in [RFC2822].
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomPersonConstruct.Uri">
+            <summary>
+            The "atom:uri" element's content conveys an IRI associated with the
+            person.  Person constructs MAY contain an atom:uri element, but MUST
+            NOT contain more than one.  The content of atom:uri in a Person
+            construct MUST be an IRI reference 
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomPersonConstruct.Name">
+            <summary>
+            The "atom:name" element's content conveys a human-readable name for
+            the person.  The content of atom:name is Language-Sensitive.  Person
+            constructs MUST contain exactly one "atom:name" element.
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomCategory">
+            <summary>
+            The "atom:category" element conveys information about a category
+            associated with an entry or feed.  This specification assigns no
+            meaning to the content (if any) of this element.
+            <para><![CDATA[
+            atomCategory =
+               element atom:category {
+                  atomCommonAttributes,
+                  attribute term { text },
+                  attribute scheme { atomUri }?,
+                  attribute label { text }?,
+                  undefinedContent
+               }]]>
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomCategory.Term">
+            <summary>
+            The "term" attribute is a string that identifies the category to which the entry or feed belongs.  RssCategory elements MUST have a "term" attribute.
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomCategory.Scheme">
+            <summary>
+            The "scheme" attribute is an IRI that identifies a categorization scheme.  RssCategory elements MAY have a "scheme" attribute.
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomCategory.Label">
+            <summary>
+            <![CDATA[The "label" attribute provides a human-readable label for display in  end-user applications.  The content of the "label" attribute is Language-Sensitive.  Entities such as "&amp;" and "&lt;" represent their corresponding characters ("&" and ">", respectively), not markup.  RssCategory elements MAY have a "label" attribute.]]>
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomEntry">
+            <summary>
+            The "atom:entry" element represents an individual entry, acting as a
+            container for metadata and data associated with the entry.  This
+            element can appear as a child of the atom:feed element, or it can
+            appear as the document (i.e., top-level) element of a stand-alone
+            Atom Entry OpmlDocument.
+            <para><![CDATA[
+            atomEntry =
+               element atom:entry {
+                  atomCommonAttributes,
+                  (atomAuthor*
+                   & atomCategory*
+                   & atomContent?
+                   & atomContributor*
+                   & atomId
+                   & atomLink*
+                   & atomPublished?
+                   & atomRights?
+                   & atomSource?
+                   & atomSummary?
+                   & atomTitle
+                   & atomUpdated
+                   & extensionElement*)
+               }]]>
+            </para>
+            </summary>
+            <remarks>
+            This specification assigns no significance to the order of appearance
+            of the child elements of atom:entry.
+            <para>
+            The following child elements are defined by this specification (note
+            that it requires the presence of some of these elements):
+            </para><para>
+            <list type="bullet">
+            <item>atom:entry elements MUST contain one or more atom:author elements,
+               unless the atom:entry contains an atom:source element that
+               contains an atom:author element or, in an Atom Feed OpmlDocument, the
+               atom:feed element contains an atom:author element itself.</item>
+            <item>atom:entry elements MAY contain any number of atom:category
+               elements.</item>
+            <item>atom:entry elements MUST NOT contain more than one atom:content
+               element.</item>
+            <item>atom:entry elements MAY contain any number of atom:contributor
+               elements.      </item> 
+            <item>atom:entry elements MUST contain exactly one atom:id element.</item>
+            <item>atom:entry elements that contain no child atom:content element
+               MUST contain at least one atom:link element with a rel attribute
+               value of "alternate".</item>
+            <item>atom:entry elements MUST NOT contain more than one atom:link
+               element with a rel attribute value of "alternate" that has the
+               same combination of type and hreflang attribute values.</item>
+            <item>atom:entry elements MAY contain additional atom:link elements
+               beyond those described above.</item>
+            <item>atom:entry elements MUST NOT contain more than one atom:published
+               element.</item>
+            <item>atom:entry elements MUST NOT contain more than one atom:rights
+               element.</item>
+            <item>atom:entry elements MUST NOT contain more than one atom:source
+               element.</item>
+            <item>atom:entry elements MUST contain an atom:summary element in either
+               of the following cases:
+               *  the atom:entry contains an atom:content that has a "src"
+                  attribute (and is thus empty).
+               *  the atom:entry contains content that is encoded in Base64;
+                  i.e., the "type" attribute of atom:content is a MIME media type
+                  [MIMEREG], but is not an XML media type [RFC3023], does not
+                  begin with "text/", and does not end with "/xml" or "+xml".</item>
+            <item>atom:entry elements MUST NOT contain more than one atom:summary
+               element.</item>
+            <item>atom:entry elements MUST contain exactly one atom:title element.</item>
+            <item>atom:entry elements MUST contain exactly one atom:updated element.</item></list>
+            </para>
+            </remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomEntry.Content">
+            <summary>
+            The "atom:content" element either contains or links to the content of
+            the entry.  The content of atom:content is Language-Sensitive.
+            <para>
+            atomInlineTextContent =
+               element atom:content {
+                  atomCommonAttributes,
+                  attribute type { "text" | "html" }?,
+                  (text)*
+               }
+            </para><para>
+            atomInlineXHTMLContent =
+               element atom:content {
+                  atomCommonAttributes,
+                  attribute type { "xhtml" },
+                  xhtmlDiv
+               }
+            </para><para>
+            atomInlineOtherContent =
+               element atom:content {
+                  atomCommonAttributes,
+                  attribute type { atomMediaType }?,
+                  (text|anyElement)*
+               }
+            </para><para>
+            atomOutOfLineContent =
+               element atom:content {
+                  atomCommonAttributes,
+                  attribute type { atomMediaType }?,
+                  attribute src { atomUri },
+                  empty
+               }
+            </para><para>
+            atomContent = atomInlineTextContent
+             | atomInlineXHTMLContent
+             | atomInlineOtherContent
+             | atomOutOfLineContent
+            </para><para>
+            .3.1.  The "type" Attribute
+            </para><para>
+            On the atom:content element, the value of the "type" attribute MAY be
+            one of "text", "html", or "xhtml".  Failing that, it MUST conform to
+            the syntax of a MIME media type, but MUST NOT be a composite type
+            (see Section 4.2.6 of [MIMEREG]).  If neither the type attribute nor
+            the src attribute is provided, Atom Processors MUST behave as though
+            the type attribute were present with a value of "text".
+            </para><para>
+            .3.2.  The "src" Attribute
+            </para><para>
+            atom:content MAY have a "src" attribute, whose value MUST be an IRI
+            reference [RFC3987].  If the "src" attribute is present, atom:content
+            MUST be empty.  Atom Processors MAY use the IRI to retrieve the
+            content and MAY choose to ignore remote content or to present it in a
+            different manner than local content.
+            </para><para>
+            If the "src" attribute is present, the "type" attribute SHOULD be
+            provided and MUST be a MIME media type [MIMEREG], rather than "text",
+            "html", or "xhtml".  The value is advisory; that is to say, when the
+            corresponding URI (mapped from an IRI, if necessary) is dereferenced,
+            if the server providing that content also provides a media type, the
+            server-provided media type is authoritative.
+            </para><para>
+            .3.3.  Processing Model
+            </para><para>
+            Atom Documents MUST conform to the following rules.  Atom Processors
+            MUST interpret atom:content according to the first applicable rule.
+            </para><para>
+            1.  If the value of "type" is "text", the content of atom:content
+                MUST NOT contain child elements.  Such text is intended to be
+                presented to humans in a readable fashion.  Thus, Atom Processors
+                MAY collapse white space (including line breaks), and display the
+                text using typographic techniques such as justification and
+                proportional fonts.
+            </para><para><![CDATA[
+            2.  If the value of "type" is "html", the content of atom:content
+                MUST NOT contain child elements and SHOULD be suitable for
+                handling as HTML [HTML].  The HTML markup MUST be escaped; for
+                example, "<br>" as "&lt;br>".  The HTML markup SHOULD be such
+                that it could validly appear directly within an HTML <DIV>
+                element.  Atom Processors that display the content MAY use the
+                markup to aid in displaying it.]]>
+            </para><para><![CDATA[
+            3.  If the value of "type" is "xhtml", the content of atom:content
+                MUST be a single XHTML div element [XHTML] and SHOULD be suitable
+                for handling as XHTML.  The XHTML div element itself MUST NOT be
+                considered part of the content.  Atom Processors that display the
+                content MAY use the markup to aid in displaying it.  The escaped
+                versions of characters such as "&" and ">" represent those
+                characters, not markup.]]>
+            </para><para>
+            4.  If the value of "type" is an XML media type [RFC3023] or ends
+                with "+xml" or "/xml" (case insensitive), the content of
+                atom:content MAY include child elements and SHOULD be suitable
+                for handling as the indicated media type.  If the "src" attribute
+                is not provided, this would normally mean that the "atom:content"
+                element would contain a single child element that would serve as
+                the root element of the XML document of the indicated type.
+            </para><para>
+            5.  If the value of "type" begins with "text/" (case insensitive),
+                the content of atom:content MUST NOT contain child elements.
+            </para><para>
+            6.  For all other values of "type", the content of atom:content MUST
+                be a valid Base64 encoding, as described in [RFC3548], section 3.
+                When decoded, it SHOULD be suitable for handling as the indicated
+                media type.  In this case, the characters in the Base64 encoding
+                MAY be preceded and followed in the atom:content element by white
+                space, and lines are separated by a single newline (U+000A)
+                character.        
+            </para><para>
+            .3.4.  Examples
+            </para><para>
+            XHTML inline:
+            </para><para><![CDATA[
+            ...
+            <content type="xhtml">
+               <div xmlns="http://www.w3.org/1999/xhtml">
+                  This is <b>XHTML</b> content.
+               </div>
+            </content>
+            ...
+            <content type="xhtml">
+               <xhtml:div xmlns:xhtml="http://www.w3.org/1999/xhtml">
+                  This is <xhtml:b>XHTML</xhtml:b> content.
+               </xhtml:div>
+            </content>
+            ...]]>
+            </para><para>
+            The following example assumes that the XHTML namespace has been bound
+            to the "xh" prefix earlier in the document:
+            </para><para><![CDATA[
+            ...
+            <content type="xhtml">
+               <xh:div>
+                  This is <xh:b>XHTML</xh:b> content.
+               </xh:div>
+            </content>
+            ...]]>
+            </para><para>
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomEntry.Published">
+            <summary>
+            The "atom:published" element is a Date construct indicating an
+            instant in time associated with an event early in the life cycle of
+            the entry.
+            <para>
+            atomPublished = element atom:published { atomDateConstruct }
+            </para><para>
+            Typically, atom:published will be associated with the initial
+            creation or first availability of the resource.
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomEntry.Summary">
+            <summary>
+            The "atom:summary" element is a Text construct that conveys a short
+            summary, abstract, or excerpt of an entry.
+            <para>
+            atomSummary = element atom:summary { atomTextConstruct }
+            </para><para>
+            It is not advisable for the atom:summary element to duplicate
+            atom:title or atom:content because Atom Processors might assume there
+            is a useful summary when there is none.
+            </para>
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomEntry.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomFeed">
+            <summary>
+            The "atom:feed" element is the document (i.e., top-level) element of
+            an Atom Feed OpmlDocument, acting as a container for metadata and data
+            associated with the feed.  Its element children consist of metadata
+            elements followed by zero or more atom:entry child elements.
+            <para><![CDATA[
+            atomFeed =
+               element atom:feed {
+                  atomCommonAttributes,
+                  (atomAuthor*
+                   & atomCategory*
+                   & atomContributor*
+                   & atomGenerator?
+                   & atomIcon?
+                   & atomId
+                   & atomLink*
+                   & atomLogo?
+                   & atomRights?
+                   & atomSubtitle?
+                   & atomTitle
+                   & atomUpdated
+                   & extensionElement*),
+                  atomEntry*
+               }]]>
+            </para>
+            </summary>
+            <remarks>
+            This specification assigns no significance to the order of atom:entry
+            elements within the feed.  
+            <para>
+            The following child elements are defined by this specification (note
+            that the presence of some of these elements is required):
+            </para><para>
+            <list type="bullet">
+            <item>atom:feed elements MUST contain one or more atom:author elements,
+               unless all of the atom:feed element's child atom:entry elements
+               contain at least one atom:author element.
+            </item><item>atom:feed elements MAY contain any number of atom:category
+               elements.
+            </item><item>atom:feed elements MAY contain any number of atom:contributor
+               elements.
+            </item><item>atom:feed elements MUST NOT contain more than one atom:generator
+               element.
+            </item><item>atom:feed elements MUST NOT contain more than one atom:icon
+               element.
+            </item><item>atom:feed elements MUST NOT contain more than one atom:logo
+               element.
+            </item><item>atom:feed elements MUST contain exactly one atom:id element.
+            </item><item>atom:feed elements SHOULD contain one atom:link element with a rel
+               attribute value of "self".  This is the preferred URI for
+               retrieving Atom Feed Documents representing this Atom feed.
+            </item><item>atom:feed elements MUST NOT contain more than one atom:link
+               element with a rel attribute value of "alternate" that has the
+               same combination of type and hreflang attribute values.
+            </item><item>atom:feed elements MAY contain additional atom:link elements
+               beyond those described above.
+            </item><item>atom:feed elements MUST NOT contain more than one atom:rights
+               element.
+            </item><item>atom:feed elements MUST NOT contain more than one atom:subtitle
+               element.
+            </item><item>atom:feed elements MUST contain exactly one atom:title element.
+            </item><item>atom:feed elements MUST contain exactly one atom:updated element.</item></list>
+            </para><para>
+            If multiple atom:entry elements with the same atom:id value appear in
+            an Atom Feed OpmlDocument, they represent the same entry.  Their
+            atom:updated timestamps SHOULD be different.  If an Atom Feed
+            OpmlDocument contains multiple entries with the same atom:id, Atom
+            Processors MAY choose to display all of them or some subset of them.
+            One typical behavior would be to display only the entry with the
+            latest atom:updated timestamp.
+            </para>
+            </remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomFeed.Generator">
+            <summary>
+            The "atom:generator" element's content identifies the agent used to
+            generate a feed, for debugging and other purposes.
+            <para>
+            atomGenerator = element atom:generator {
+               atomCommonAttributes,
+               attribute uri { atomUri }?,
+               attribute version { text }?,
+               text
+            }
+            </para><para>
+            The content of this element, when present, MUST be a string that is a
+            human-readable name for the generating agent.  Entities such as <![CDATA[
+            "&amp;" and "&lt;" represent their corresponding characters ("&" and
+            "<" respectively), not markup.]]>
+            </para><para>
+            The atom:generator element MAY have a "uri" attribute whose value
+            MUST be an IRI reference [RFC3987].  When dereferenced, the resulting
+            URI (mapped from an IRI, if necessary) SHOULD produce a
+            representation that is relevant to that agent.
+            </para><para>
+            The atom:generator element MAY have a "version" attribute that
+            indicates the version of the generating agent.
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomFeed.Icon">
+            <summary>
+             The "atom:icon" element's content is an IRI reference [RFC3987] that
+            identifies an image that provides iconic visual identification for a
+            feed.
+            <para>
+            atomIcon = element atom:icon {
+               atomCommonAttributes,
+               (atomUri)
+            }
+            </para><para>
+            The image SHOULD have an aspect ratio of one (horizontal) to one
+            (vertical) and SHOULD be suitable for presentation at a small size.
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomFeed.Logo">
+            <summary>
+            The "atom:logo" element's content is an IRI reference [RFC3987] that
+            identifies an image that provides visual identification for a feed.
+            <para>
+            atomLogo = element atom:logo {
+               atomCommonAttributes,
+               (atomUri)
+            }
+            </para><para>
+            The image SHOULD have an aspect ratio of 2 (horizontal) to 1
+            (vertical).
+            </para><para>
+            </para>
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomFeed.Entries">
+            <summary>
+            The "atom:entry" element represents an individual entry, acting as a
+            container for metadata and data associated with the entry.  This
+            element can appear as a child of the atom:feed element, or it can
+            appear as the document (i.e., top-level) element of a stand-alone
+            Atom Entry OpmlDocument.
+            <para>
+            </para>
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomFeed.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomGenerator">
+            <summary>
+            The "atom:generator" element's content identifies the agent used to generate a feed, for debugging and other purposes.
+            </summary>    
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomGenerator.Version">
+            <summary>
+            The atom:generator element MAY have a "version" attribute that
+            indicates the version of the generating agent.
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Atom.AtomGenerator.Uri">
+            <summary>
+            The content of this element, when present, MUST be a string that is a
+            human-readable name for the generating agent.  Entities such as<![CDATA[
+            "&amp;" and "&lt;" represent their corresponding characters ("&" and
+            "<" respectively), not markup.]]>
+            <para>
+            The atom:generator element MAY have a "uri" attribute whose value
+            MUST be an IRI reference [RFC3987].  When dereferenced, the resulting
+            URI (mapped from an IRI, if necessary) SHOULD produce a
+            representation that is relevant to that agent.
+            </para>
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Atom.AtomContentType">
+            <summary>
+            Experience teaches that feeds that contain textual content are in
+            general more useful than those that do not.  Some applications (one
+            example is full-text indexers) require a minimum amount of text or
+            (X)HTML to function reliably and predictably.  Feed producers should
+            be aware of these issues.  It is advisable that each atom:entry
+            element contain a non-empty atom:title element, a non-empty
+            <para>
+            atom:content element when that element is present, and a non-empty
+            atom:summary element when the entry contains no atom:content element.
+            However, the absence of atom:summary is not an error, and Atom
+            Processors MUST NOT fail to function correctly as a consequence of
+            such an absence.
+            </para>
+            </summary>
+        </member>
+        <member name="F:Raccoom.Xml.Atom.AtomContentType.Text">
+             <summary>
+             Example atom:title with text content:
+            
+             ... <![CDATA[
+             <title type="text">
+             Less: &lt;
+             </title>
+             ...]]>
+            
+             If the value is "text", the content of the Text construct MUST NOT
+             contain child elements.  Such text is intended to be presented to
+             humans in a readable fashion.  Thus, Atom Processors MAY collapse
+             white space (including line breaks) and display the text using
+             typographic techniques such as justification and proportional fonts.
+             </summary>
+        </member>
+        <member name="F:Raccoom.Xml.Atom.AtomContentType.XHtml">
+             <summary>
+             Example atom:title with XHTML content:
+            
+             ...<![CDATA[
+             <title type="xhtml" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+             <xhtml:div>
+             Less: <xhtml:em> &lt; </xhtml:em>
+             </xhtml:div>
+             </title>
+             ...]]>
+            
+             If the value of "type" is "xhtml", the content of the Text construct
+             MUST be a single XHTML div element [XHTML] and SHOULD be suitable for
+             handling as XHTML.  The XHTML div element itself MUST NOT be
+             considered part of the content.  Atom Processors that display the
+             content MAY use the markup to aid in displaying it.  The escaped
+             versions of characters such as <![CDATA["&" and ">"]]> represent those
+             characters, not markup.
+            
+             </summary>
+        </member>
+        <member name="F:Raccoom.Xml.Atom.AtomContentType.Html">
+             <summary>
+             Example atom:title with HTML content:
+            
+             ...<![CDATA[
+             <title type="html">
+             Less: &lt;em> &amp;lt; &lt;/em>
+             </title>
+             ...]]>
+            
+             If the value of "type" is "html", the content of the Text construct
+             MUST NOT contain child elements and SHOULD be suitable for handling
+             as HTML [HTML].  Any markup within MUST be escaped; for example,
+             <![CDATA["<br>"]]> as "&lt;br>".  HTML markup within SHOULD be such that it could
+             validly appear directly within an HTML <![CDATA[<DIV>]]> element, after
+             unescaping.  Atom Processors that display such content MAY use that
+             markup to aid in its display.
+             </summary>
+        </member>
+        <member name="T:Raccoom.Xml.ComponentModel.SyndicationObjectBase">
+            <summary>
+            Serves as base class for all syndication related classes (<see cref="T:Raccoom.Xml.Rss.RssChannel"/>,<see cref="T:Raccoom.Xml.Opml.OpmlDocument"/>,<see cref="T:Raccoom.Xml.Atom.AtomFeed"/>) and defines the most common interface and features.
+            </summary>
+        </member>
+        <member name="E:Raccoom.Xml.ComponentModel.SyndicationObjectBase.PropertyChanged">
+            <summary>Occurs when a property value changes.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.ComponentModel.SyndicationObjectBase._xmlns">
+            <summary>xml document namespaces</summary>
+        </member>
+        <member name="F:Raccoom.Xml.ComponentModel.SyndicationObjectBase._docFragment">
+            <summary>xml content that belongs to namespaces</summary>
+        </member>
+        <member name="P:Raccoom.Xml.ComponentModel.SyndicationObjectBase.Specified">
+            <summary>
+            Indicates if the instance is specified and contains valid data (Xml Serialisation)
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.ComponentModel.SyndicationObjectBase.OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>A PropertyChanged event is raised when a property is changed on a component. A PropertyChangedEventArgs object specifies the name of the property that changed.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.ComponentModel.SyndicationObjectParser">
+            <summary>
+            Generic xml parser. Works like OR Mapper, reflects target object and set corresponding values from xml file.
+            </summary>
+        </member>
+        <member name="F:Raccoom.Xml.ComponentModel.SyndicationObjectParser._complexTypeRepository">
+            <summary></summary>
+        </member>
+        <member name="M:Raccoom.Xml.ComponentModel.SyndicationObjectParser.Parse(System.Object,System.Xml.XmlReader)">
+            <summary>Xml parsing against reflected target object</summary>
+            <param name="target">Target object instance that will hold the gained data</param>
+            <param name="xmlTextReader">XmlReader instance that holds the source xml</param>
+            <exception cref="T:System.Xml.XmlException">The exception that is thrown on XML parse errors. </exception>
+            <exception cref="T:System.IO.IOException">The exception that is thrown when an I/O error occurs.</exception>
+        </member>
+        <member name="M:Raccoom.Xml.ComponentModel.SyndicationObjectParser.GetComplexProperties(System.Object)">
+            <summary>Reflects all the complex properties contained in target</summary>
+        </member>
+        <member name="M:Raccoom.Xml.ComponentModel.SyndicationObjectParser.GetPropertyByName(System.String,System.Object)">
+            <summary>
+             Try to get property by name
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.ComponentModel.SyndicationObjectParser.SetPropertyValue(System.Xml.XmlReader,System.Object,System.Reflection.PropertyInfo)">
+            <summary>
+            Set property value 
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.ComponentModel.SyndicationObjectParser.ParseDateTime(System.String)">
+             <summary>
+             <remarks>
+            Copyright (c)  vendredi13@007.freesurf.fr
+            All rights reserved.
+             </remarks>
+             </summary>
+             <param name="adate">rfc date time</param>
+             <returns>Rfc date as DateTime</returns>
+        </member>
+        <member name="T:Raccoom.Xml.ComponentModel.IParseableObject">
+            <summary>
+            IParseableObject interface is used by <see cref="T:Raccoom.Xml.ComponentModel.SyndicationObjectParser"/> and enables the class to supress events during the parsing operation.
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.ComponentModel.IParseableObject.BeginParse">
+            <summary>
+            Called by <see cref="T:Raccoom.Xml.ComponentModel.SyndicationObjectParser"/> before the parsing operation starts.
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.ComponentModel.IParseableObject.EndParse">
+            <summary>
+            Called by <see cref="T:Raccoom.Xml.ComponentModel.SyndicationObjectParser"/> after the parsing operation took place.
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.ComponentModel.IParseableObject.Errors">
+            <summary>
+            Key: Type.Propertyname Value: Parser exception message
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssCategory">
+            <summary>
+            The value of the element is a forward-slash-separated string that identifies a hierarchic location in the indicated taxonomy.
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssCategory.Value">
+            <summary>The value of the element is a forward-slash-separated string that identifies a hierarchic location in the indicated taxonomy. Processors may establish conventions for the interpretation of categories.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssCategory.Domain">
+            <summary>A string that identifies a categorization taxonomy.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.GenericRssFactory`2">
+            <summary>
+            GenericRssFactory implements the operations to read and write rss related objects
+            </summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.GenericRssFactory`2._webProxy">
+            <summary>web proxy to use when get feeds from da web</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.GenericRssFactory`2.#ctor">
+            <summary>Initializes a new instance of GenericRssFactory</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.GenericRssFactory`2.Proxy">
+            <summary>
+            Gets or sets the WebProxy that is used to connect to the network, can be null
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.GenericRssFactory`2.Create(System.String)">
+            <summary>
+            Gets (create) the requested <see cref="T:Raccoom.Xml.Rss.IRssChannel"/> instance
+            </summary>
+            <param name="feed">The URI or filename of the resource to receive the data.</param>
+            <returns>The requested see cref="IRssChannel" instance</returns>		
+        </member>
+        <member name="M:Raccoom.Xml.Rss.GenericRssFactory`2.Create">
+            <summary>
+            Create a new <see cref="T:Raccoom.Xml.Rss.IRssChannel"/> instance 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssXmlWriter">
+            <summary>
+            GenericRssXmlWriter implements the write operations needed
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssXmlReader">
+            <summary>
+            GenericRssXmlReader implements the read operations needed
+            </summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssXmlReader._webProxy">
+            <summary>web proxy to use when get feeds from da web</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssXmlReader.Proxy">
+            <summary>
+            Gets or sets the WebProxy that is used to connect to the network, can be null
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssChannel">
+            <summary>RSS 2.0 channel
+            RSS is a Web content syndication format. Its name is an acronym for Really Simple Syndication. RSS is a dialect of XML. All RSS files must conform to the XML 1.0 specification, as published on the World Wide Web Consortium (W3C) website. 
+            At the top level, a RSS document is a rss element, with a mandatory attribute called version, that specifies the version of RSS that the document conforms to. If it conforms to this specification, the version attribute must be 2.0.
+            Subordinate to the rss element is a single channel element, which contains information about the channel (metadata) and its contents.
+            </summary>
+            <remarks>RSS 2.0 Specification http://blogs.law.harvard.edu/tech/rss</remarks>	
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Title">
+            <summary>The name of the channel. It's how people refer to your service. If you have an HTML website that contains the same information as your RSS file, the title of your channel should be the same as the title of your website.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Description">
+            <summary>Phrase or sentence describing the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Link">
+            <summary>The URL to the HTML website corresponding to the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Language">
+            <summary>The language the channel is written in. This allows aggregators to group all Italian language sites, for example, on a single page. A list of allowable values for this element, as provided by Netscape, is here. You may also use values defined by the W3C.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Copyright">
+            <summary>Copyright notice for content in the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.ManagingEditor">
+            <summary> Email address for person responsible for editorial content.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.WebMaster">
+            <summary>Email address for person responsible for technical issues relating to channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.PubDate">
+            <summary>The publication date for the content in the channel. For example, the New York Times publishes on a daily basis, the publication date flips once every 24 hours. That's when the pubDate of the channel changes. All date-times in RSS conform to the Date and Time Specification of RFC 822, with the exception that the year may be expressed with two characters or four characters (four preferred). </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.LastBuildDate">
+            <summary>The last time the content of the channel changed.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Category">
+            <summary>Specify one or more categories that the channel belongs to. Follows the same rules as the item-level category element.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Generator">
+            <summary>A string indicating the program used to generate the channel.</summary>		
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Docs">
+            <summary>A URL that points to the documentation for the format used in the RSS file. It's probably a pointer to this page. It's for people who might stumble across an RSS file on a Web server 25 years from now and wonder what it is.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Ttl">
+            <summary>ttl stands for time to live. It's a number of minutes that indicates how long a channel can be cached before refreshing from the source.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Rating">
+            <summary>The PICS rating for the channel</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Cloud">
+            <summary>A hint for aggregators telling them which hours they can skip. </summary>
+            <remarks>
+            Contains up to 24  sub-elements whose value is a number between 0 and 23, representing a time in GMT, when aggregators, if they support the feature, may not read the channel on hours listed in the skipHours element. The hour beginning at midnight is hour zero.
+            </remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.Image">
+            <summary>Specifies a GIF, JPEG or PNG image that can be displayed with the channel.<see cref="T:Raccoom.Xml.Rss.IRssImage"/></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssChannel.TextInput">
+            <summary>Specifies a text input box that can be displayed with the channel.<see cref="T:Raccoom.Xml.Rss.IRssTextInput"/></summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssCloud">
+            <summary>Is an optional sub-element of channel.  It specifies a web service that supports the rssCloud interface which can be implemented in HTTP-POST, XML-RPC or SOAP 1.1.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssCloud.Domain">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssCloud.Port">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssCloud.Path">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssCloud.RegisterProcedure">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssCloud.Protocol">
+            <summary></summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssEnclosure">
+            <summary>RssEnclosure is an optional sub-element of item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssEnclosure.Url">
+            <summary> The url must be an http url.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssEnclosure.Length">
+            <summary>length says how big it is in bytes</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssEnclosure.Type">
+            <summary>type says what its type is, a standard MIME type.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssGuid">
+            <summary>Optional sub-element of item. RssGuid stands for globally unique identifier. It's a string that uniquely identifies the item. When present, an aggregator may choose to use this string to determine if an item is new. isPermaLink is optional, its default value is true. If its value is false, the guid may not be assumed to be a url, or a url to anything in particular.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssGuid.IsPermaLink">
+            <summary>If the guid element has an attribute named "isPermaLink" with a value of true, the reader may assume that it is a permalink to the item, that is, a url that can be opened in a Web browser, that points to the full item described by the item element.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssGuid.Value">
+            <summary>RssGuid stands for globally unique identifier. It's a string that uniquely identifies the item. When present, an aggregator may choose to use this string to determine if an item is new.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssImage">
+            <summary>RssImage is an optional sub-element of channel, which contains three required and three optional sub-elements.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssImage.Title">
+            <summary>Describes the image, it's used in the ALT attribute of the HTML img tag when the channel is rendered in HTML. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssImage.Url">
+            <summary>The URL of a GIF, JPEG or PNG image. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssImage.Link">
+            <summary>the URL of the site, when the channel is rendered, the image is a link to the site.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssImage.Description">
+            <summary>Contains text that is included in the TITLE attribute of the link formed around the image in the HTML rendering.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssImage.Width">
+            <summary>Maximum value for width is 144, default value is 88.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssImage.Height">
+            <summary> Maximum value for height is 400, default value is 31.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssItem">
+            <summary>An item may represent a "story" -- much like a story in a newspaper or magazine; if so its description is a synopsis of the story, and the link points to the full story. An item may also be complete in itself, if so, the description contains the text (entity-encoded HTML is allowed), and the link and title may be omitted. All elements of an item are optional, however at least one of title or description must be present.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Channel">
+            <summary>Gets the parent channel that the item is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Title">
+            <summary>The title of the item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Description">
+            <summary>The item synopsis.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Link">
+            <summary>The URL of the item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Author">
+            <summary>Email address of the author of the item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Category">
+            <summary>Includes the item in one or more categories.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.PubDate">
+            <summary>Indicates when the item was published.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Comments">
+            <summary>URL of a page for comments relating to the item. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Enclosure">
+            <summary>Describes a media object that is attached to the item. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Guid">
+            <summary>A string that uniquely identifies the item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssItem.Source">
+            <summary>The RSS channel that the item came from.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssSource">
+            <summary>Optional sub-element of item. Its value is the name of the RSS channel that the item came from, derived from its title. It has one required attribute, url, which links to the XMLization of the source.The purpose of this element is to propagate credit for links, to publicize the sources of news items. It can be used in the Post command of an aggregator. It should be generated automatically when forwarding an item from an aggregator to a weblog authoring tool.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssSource.Url">
+            <summary>The RSS channel url that the item came from.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssSource.Value">
+            <summary>The RSS channel name that the item came from.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssTextInput">
+            <summary>A channel may optionally contain a textInput sub-element, which contains four required sub-elements.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssTextInput.Title">
+            <summary>The label of the Submit button in the text input area. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssTextInput.Description">
+            <summary>Explains the text input area. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssTextInput.Name">
+            <summary> The name of the text object in the text input area. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssTextInput.Link">
+            <summary>The URL of the CGI script that processes text input requests. </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssCategory">
+            <summary>
+            The value of the element is a forward-slash-separated string that identifies a hierarchic location in the indicated taxonomy.
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssCategory.Value">
+            <summary>The value of the element is a forward-slash-separated string that identifies a hierarchic location in the indicated taxonomy. Processors may establish conventions for the interpretation of categories.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.IRssCategory.Domain">
+            <summary>A string that identifies a categorization taxonomy.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.CloudProtocol">
+            <summary>
+            Specifies a web service which can be implemented in HTTP-POST, XML-RPC or SOAP 1.1. 
+            </summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.CloudProtocol.None">
+            <summary>No protocol is used.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssWriter">
+            <summary>
+            IRssWriter defines the write operations needed
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.IRssReader">
+            <summary>
+            IRssReader defines the read operations needed
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssChannel">
+            <summary>
+            RSS RssChannel element which contains information about the channel (metadata) and its contents.
+            </summary>
+            <remarks><a href="http://blogs.law.harvard.edu/tech/rss" target="_blank">RSS 2.0 Specification</a></remarks>		
+            <example>
+            <h4>Consume feeds</h4>
+            This sample shows how to consume the code project "Last 10 updates (category: All Topics)" rss feed.
+            <code>
+            Raccoom.Xml.RssChannel myRssChannel = new Raccoom.Xml.RssChannel(new Uri("http://www.codeproject.com/webservices/articlerss.aspx?cat=1"));
+            // write the channel title to the standard output stream. 
+            System.Console.WriteLine(myRssChannel.Title);
+            // write each item's title to the standard output stream. 
+            foreach(Raccoom.Xml.RssItem item in myRssChannel.Items)
+            {
+            	System.Console.WriteLine(item.Title);
+            }
+            </code>
+            This sample shows how to create rss feeds
+            <code>
+            Raccoom.Xml.RssChannel myRssChannel = new Raccoom.Xml.RssChannel();
+            myRssChannel.Title = "Sample rss feed";
+            myRssChannel.Copyright = "(c) 2003 by Christoph Richner";
+            // add item to channel
+            Raccoom.Xml.RssItem item = new Raccoom.Xml.RssItem();
+            item.Title = "Raccoom RSS 2.0 Framework announced";
+            item.Link = "http://jerrymaguire.sytes.net";
+            myRssChannel.Items.Add(item);
+            </code>
+            <h4>Save feeds</h4>
+            This example saves the channel to a file
+            <code>
+            // save feed to local storage
+            myRssChannel.Save(@"c:\cp.xml");
+            </code>
+            This example saves the channel to <c>System.IO.Stream</c>.
+            <code>
+            // create stream
+            System.IO.MemoryStream stream = new System.IO.MemoryStream();
+            myRssChannel.Write(stream);
+            stream.Close();
+            </code>	
+            This sample shows how to publish your feed (Default Proxy)
+            <code>
+            // password-based authentication for web resource
+            System.Net.NetworkCredential providerCredential = new System.Net.NetworkCredential("username", "password", "domain");
+            // use default system proxy
+            Uri uri = new Uri("http://domain.net");
+            myChannel.Publish(uri, null, "POST", providerCredential);
+            </code>
+            This sample shows how to publish your feed (Custom Proxy)
+            <code>
+            // password-based authentication for web resource
+            System.Net.NetworkCredential providerCredential = new System.Net.NetworkCredential("username", "password", "domain");
+            // password-based authentication for web proxy
+            System.Net.NetworkCredential proxyCredential = new System.Net.NetworkCredential("username", "password", "domain");
+            // create custom proxy
+            System.Net.WebProxy webProxy = new System.Net.WebProxy("http://proxyurl:8080",false);
+            webProxy.Credentials = proxyCredential;
+            // publish
+            myChannel.Publish(uri, webProxy, "POST", providerCredential);
+            </code>
+            <h4>Transform feeds</h4>
+            This sample shows how to consume and transform (XSLT/CSS) the code project feed, where transform.xslt is a custom xslt file.
+            <code>
+            // consume rss feed
+            RssChannel myChannel = new RssChannel(new Uri("http://www.codeproject.com/webservices/articlerss.aspx?cat=3"));
+            // transform to stream
+            System.IO.MemoryStream memoryStream = myChannel.Transform(new System.Xml.XmlTextReader("transform.xslt"));
+            // transform to html output file
+            myChannel.Transform(new System.Xml.XmlTextReader("transform.xslt"), "myChannel.htm");
+            // transform to html and xml output file
+            myChannel.Transform(new System.Xml.XmlTextReader("transform.xslt"), "channel.xml", "channel.htm");
+            </code>
+            </example>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._title">
+            <summary>Title</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._description">
+            <summary>Description</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._link">
+            <summary>Link</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._language">
+            <summary>Language</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._copyright">
+            <summary>Copyright</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._managingEditor">
+            <summary>ManagingEditor</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._webMaster">
+            <summary>WebMaster</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._pubDate">
+            <summary>PubDate</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._lastBuildDate">
+            <summary>LastBuildDate</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._category">
+            <summary>RssCategory</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._generator">
+            <summary>Generator</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._docs">
+            <summary>Docs</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._cloud">
+            <summary>RssCloud</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._tTL">
+            <summary>TTL</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._image">
+            <summary>RssImage</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._rating">
+            <summary>Rating</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._textInput">
+            <summary>RssTextInput</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._items">
+            <summary>Items</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._supressLastBuildTimeUpdate">
+            <summary>supress flag during parsing</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssChannel._errors">
+            <summary>holds the parsing errors</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssChannel.#ctor">
+            <summary>
+            Initializes a new instance of the RssChannel class and set default values.
+            </summary>		
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Version">
+            <summary>
+            Gets the version if the version was specified
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Title">
+            <summary>The name of the channel. It's how people refer to your service. If you have an HTML website that contains the same information as your RSS file, the title of your channel should be the same as the title of your website.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Description">
+            <summary>Phrase or sentence describing the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Link">
+            <summary>The URL to the HTML website corresponding to the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Language">
+            <summary>The language the channel is written in. This allows aggregators to group all Italian language sites, for example, on a single page. A list of allowable values for this element, as provided by Netscape, is here. You may also use values defined by the W3C.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.LanguageIso">
+            <summary>
+            Internal, gets the CultureInfo ISO Code
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Copyright">
+            <summary>Copyright notice for content in the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.ManagingEditor">
+            <summary> Email address for person responsible for editorial content.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.WebMaster">
+            <summary>Email address for person responsible for technical issues relating to channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.PubDate">
+            <summary>The publication date for the content in the channel. For example, the New York Times publishes on a daily basis, the publication date flips once every 24 hours. That's when the pubDate of the channel changes. All date-times in RSS conform to the Date and Time Specification of RFC 822, with the exception that the year may be expressed with two characters or four characters (four preferred). </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.PubDateRfc">
+            <summary>
+            Internal, gets the DateTime in RFC822 format
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.LastBuildDate">
+            <summary>The last time the content of the channel changed.</summary>
+            <remarks>LastBuildDate is updated automatically every time the PropertyChanged event is fired.</remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.LastBuildDateRfc">
+            <summary>
+            Internal, gets the DateTime in RFC822 format
+            </summary>				
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Category">
+            <summary>Specify one or more categories that the channel belongs to. Follows the same rules as the item-level category element.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Generator">
+            <summary>A string indicating the program used to generate the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Docs">
+            <summary>A URL that points to the documentation for the format used in the RSS file. It's probably a pointer to this page. It's for people who might stumble across an RSS file on a Web server 25 years from now and wonder what it is.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Cloud">
+            <summary>Allows processes to register with a cloud to be notified of updates to the channel, implementing a lightweight publish-subscribe protocol for RSS feeds. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Raccoom#Xml#Rss#IRssChannel#Cloud">
+            <summary>Allows processes to register with a cloud to be notified of updates to the channel, implementing a lightweight publish-subscribe protocol for RSS feeds. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.CloudSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Ttl">
+            <summary>ttl stands for time to live. It's a number of minutes that indicates how long a channel can be cached before refreshing from the source.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.TtlSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Image">
+            <summary>Specifies a GIF, JPEG or PNG image that can be displayed with the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Raccoom#Xml#Rss#IRssChannel#Image">
+            <summary>Specifies a GIF, JPEG or PNG image that can be displayed with the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.ImageSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Rating">
+            <summary>The PICS rating for the channel</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.TextInput">
+            <summary>Specifies a text input box that can be displayed with the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Raccoom#Xml#Rss#IRssChannel#TextInput">
+            <summary>Specifies a text input box that can be displayed with the channel.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.TextInputSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.Items">
+            <summary>A channel may contain any number of items. An item may represent a "story" -- much like a story in a newspaper or magazine; if so its description is a synopsis of the story, and the link points to the full story. An item may also be complete in itself, if so, the description contains the text (entity-encoded HTML is allowed), and the link and title may be omitted.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssChannel.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssChannel.SupressUpdateLastBuildTime">
+            <summary>
+            Gets or sets the state of the flag to supress updates of LastBuildTime during parsing
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssChannel.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssChannel.OnSubItemPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>A PropertyChanged event is raised when a sub property is changed. A PropertyChangedEventArgs object specifies the name of the property that changed.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssCloud">
+            <summary>Is an optional sub-element of channel.  It specifies a web service that supports the rssCloud interface which can be implemented in HTTP-POST, XML-RPC or SOAP 1.1.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssCloud._domain">
+            <summary>Domain</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssCloud._port">
+            <summary>Port</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssCloud._path">
+            <summary>Path</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssCloud._registerProcedure">
+            <summary>RegisterProcedure</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssCloud._protocol">
+            <summary>Protocol</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssCloud.#ctor">
+            <summary>Initializes a new instance of RssCloud with default values</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssCloud.Domain">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssCloud.Port">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssCloud.PortSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssCloud.Path">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssCloud.RegisterProcedure">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssCloud.Protocol">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssCloud.ProtocolSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssCloud.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssCloud.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssEnclosure">
+            <summary>RssEnclosure is an optional sub-element of item.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssEnclosure._url">
+            <summary>Url</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssEnclosure._length">
+            <summary>Length</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssEnclosure._type">
+            <summary>Type</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssEnclosure.#ctor">
+            <summary>Initializes a new instance of RssEnclosure with default values</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssEnclosure.Url">
+            <summary> The url must be an http url.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssEnclosure.Length">
+            <summary>length says how big it is in bytes,</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssEnclosure.LengthSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssEnclosure.Type">
+            <summary>type says what its type is, a standard MIME type.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssEnclosure.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssEnclosure.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssGuid">
+            <summary>Optional sub-element of item. RssGuid stands for globally unique identifier. It's a string that uniquely identifies the item. When present, an aggregator may choose to use this string to determine if an item is new. isPermaLink is optional, its default value is true. If its value is false, the guid may not be assumed to be a url, or a url to anything in particular.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssGuid._isPermaLink">
+            <summary>IsPermaLink</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssGuid._guid">
+            <summary>RssGuid</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssGuid.#ctor">
+            <summary>Initializes a new instance of RssGuid with default values</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssGuid.IsPermaLink">
+            <summary>If the guid element has an attribute named "isPermaLink" with a value of true, the reader may assume that it is a permalink to the item, that is, a url that can be opened in a Web browser, that points to the full item described by the item element.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssGuid.Value">
+            <summary>RssGuid stands for globally unique identifier. It's a string that uniquely identifies the item. When present, an aggregator may choose to use this string to determine if an item is new.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssGuid.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssGuid.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssImage">
+            <summary>RssImage is an optional sub-element of channel, which contains three required and three optional sub-elements.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssImage._title">
+            <summary>Title</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssImage._url">
+            <summary>Url</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssImage._link">
+            <summary>Link</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssImage._description">
+            <summary>Description</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssImage._width">
+            <summary>Width</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssImage._height">
+            <summary>Height</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssImage.#ctor">
+            <summary>Initializes a new instance with default values</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssImage.Title">
+            <summary>Describes the image, it's used in the ALT attribute of the HTML img tag when the channel is rendered in HTML. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssImage.Url">
+            <summary>The URL of a GIF, JPEG or PNG image. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssImage.Link">
+            <summary>the URL of the site, when the channel is rendered, the image is a link to the site.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssImage.Description">
+            <summary>Contains text that is included in the TITLE attribute of the link formed around the image in the HTML rendering.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssImage.Width">
+            <summary>Maximum value for width is 144, default value is 88.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssImage.WidthSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssImage.Height">
+            <summary>Maximum value for height is 400, default value is 31.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssImage.HeightSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssImage.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssImage.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssItem">
+            <summary>An item may represent a "story" -- much like a story in a newspaper or magazine; if so its description is a synopsis of the story, and the link points to the full story. An item may also be complete in itself, if so, the description contains the text (entity-encoded HTML is allowed), and the link and title may be omitted. All elements of an item are optional, however at least one of title or description must be present.<see cref="T:Raccoom.Xml.Rss.IRssItem"/></summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._title">
+            <summary>Title</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._description">
+            <summary>Description</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._link">
+            <summary>Link</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._author">
+            <summary>Author</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._category">
+            <summary>RssCategory</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._pubDate">
+            <summary>PubDate</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._comments">
+            <summary>Comments</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._enclosure">
+            <summary>RssEnclosure</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._guid">
+            <summary>RssGuid</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._source">
+            <summary>RssSource</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssItem._parent">
+            <summary>Parent channel that the item is assigned to.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssItem.#ctor">
+            <summary>Initializes a new instance with default values</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssItem.Remove">
+            <summary>
+            Removes the current item from the channel.
+            </summary>
+            <remarks>
+            When the Remove method is called, the item is removed from the channel.
+            </remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Channel">
+            <summary>
+            Gets the parent channel that the item is assigned to.
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Raccoom#Xml#Rss#IRssItem#Channel">
+            <summary>
+            Gets the parent channel that the item is assigned to.
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Title">
+            <summary>The title of the item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Description">
+            <summary>The item synopsis.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Link">
+            <summary>The URL of the item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Author">
+            <summary>Email address of the author of the item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Category">
+            <summary>Includes the item in one or more categories.</summary>
+            <summary>Specify one or more categories that the channel belongs to. Follows the same rules as the item-level category element.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.PubDateRfc">
+            <summary>
+            Internal, gets the DateTime in RFC822 format
+            </summary>		
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Comments">
+            <summary>URL of a page for comments relating to the item. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Enclosure">
+            <summary>Describes a media object that is attached to the item. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Raccoom#Xml#Rss#IRssItem#Enclosure">
+            <summary>Describes a media object that is attached to the item. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.EnclosureSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Guid">
+            <summary>A string that uniquely identifies the item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Raccoom#Xml#Rss#IRssItem#Guid">
+            <summary>A string that uniquely identifies the item.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.GuidSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Source">
+            <summary>The RSS channel that the item came from.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.Raccoom#Xml#Rss#IRssItem#Source">
+            <summary>The RSS channel that the item came from.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssItem.SourceSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssItem.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssItem.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssItem.OnSubItemPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>A PropertyChanged event is raised when a sub property is changed. A PropertyChangedEventArgs object specifies the name of the property that changed.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssSource">
+            <summary>Optional sub-element of item. Its value is the name of the RSS channel that the item came from, derived from its title. It has one required attribute, url, which links to the XMLization of the source.The purpose of this element is to propagate credit for links, to publicize the sources of news items. It can be used in the Post command of an aggregator. It should be generated automatically when forwarding an item from an aggregator to a weblog authoring tool.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssSource._uri">
+            <summary>IsPermaLink</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssSource._value">
+            <summary>RssGuid</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssSource.#ctor">
+            <summary>Initializes a new instance of RssGuid with default values</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssSource.Url">
+            <summary>The RSS channel url that the item came from.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssSource.Value">
+            <summary>The RSS channel name that the item came from.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssSource.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssSource.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssTextInput">
+            <summary>A channel may optionally contain a textInput sub-element, which contains four required sub-elements.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssTextInput._title">
+            <summary>Title</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssTextInput._description">
+            <summary>Description</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssTextInput._name">
+            <summary>Name</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Rss.RssTextInput._link">
+            <summary>Link</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssTextInput.#ctor">
+            <summary>Initializes a new instance of RssTextInput with default values</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssTextInput.Title">
+            <summary>The label of the Submit button in the text input area. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssTextInput.Description">
+            <summary>Explains the text input area. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssTextInput.Name">
+            <summary> The name of the text object in the text input area. </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Rss.RssTextInput.Link">
+            <summary>The URL of the CGI script that processes text input requests. </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Rss.RssTextInput.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Rss.RssTextInput.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Opml.GenericOpmlFactory`2">
+            <summary>
+            GenericOpmlFactory implements the operations to create <see cref="T:Raccoom.Xml.Opml.IOpmlDocument"/> objects
+            </summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.GenericOpmlFactory`2._webProxy">
+            <summary>web proxy to use when get feeds from da web</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.GenericOpmlFactory`2.#ctor">
+            <summary>Initializes a new instance of GenericOpmlFactory</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.GenericOpmlFactory`2.Proxy">
+            <summary>
+            Gets or sets the WebProxy that is used to connect to the network, can be null
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.GenericOpmlFactory`2.GetDocument(System.String)">
+            <summary>
+            Gets (create) the requested <see cref="T:Raccoom.Xml.Opml.IOpmlDocument"/> instance
+            </summary>
+            <param name="opmlDocument">The URI of the resource to receive the data.</param>
+            <returns>The requested see cref="IOpmlDocument" instance</returns>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlXmlReader._webProxy">
+            <summary>web proxy to use when get feeds from da web</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlXmlReader.Proxy">
+            <summary>
+            Gets or sets the WebProxy that is used to connect to the network, can be null
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.IOpmlBody">
+            <summary>A body contains one or more outline elements</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlBody.Document">
+            <summary>Gets the document that the outline is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlBody.Items">
+            <summary>OpmlOutline elements.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.IOpmlDocument">
+            <summary>Opml is an XML element, with a single required attribute, version; a head element and a body element, both of which are required. The version attribute is a version string, of the form, x.y, where x and y are both numeric strings.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlDocument.Head">
+            <summary>A head contains zero or more optional elements</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlDocument.Body">
+            <summary>A body contains one or more outline elements</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.IOpmlHead">
+            <summary>A head contains zero or more optional elements</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.Document">
+            <summary>Gets the document that the outline is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.Title">
+            <summary>The title of the document.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.DateCreated">
+            <summary>date-time, indicating when the document was created.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.DateModified">
+            <summary>Date-time, indicating when the document was last modified.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.OwnerName">
+            <summary>the owner of the document.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.OwnerEmail">
+            <summary>the email address of the owner of the document.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.ExpansionState">
+            <summary>comma-separated list of line numbers that are expanded. The line numbers in the list tell you which headlines to expand. The order is important. For each element in the list, X, starting at the first summit, navigate flatdown X times and expand. Repeat for each element in the list</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.VertScrollState">
+            <summary>is a number, saying which line of the outline is displayed on the top line of the window. This number is calculated with the expansion state already applied.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.WindowTop">
+            <summary>is a number, the pixel location of the top edge of the window.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.WindowLeft">
+            <summary>is a number, the pixel location of the left edge of the window.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.WindowBottom">
+            <summary>is a number, the pixel location of the bottom edge of the window</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.WindowRight">
+            <summary>is a number, the pixel location of the right edge of the window</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlHead.OwnerId">
+            <summary> is the http address of a web page that contains a form that allows a human reader to communicate with the author of the document via email or other means.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.IOpmlOutline">
+            <summary>An outline is an XML element, possibly containing one or more attributes, and containing any number of outline sub-elements.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Document">
+            <summary>Gets the document that the outline is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Parent">
+            <summary>Gets the outline that this outline is assigned to.</summary>
+            <remarks>
+            If the outline is at the root level, the Parent property returns null. 
+            </remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Text">
+            <summary>Text is the string of characters that's displayed when the outline is being browsed or edited. There is no specific limit on the length of the text attribute.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Type">
+            <summary>Type is a string, it says how the other attributes of the outline are interpreted</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Description">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Url">
+            <summary>When outline type is link url must have a value that is an http address.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.XmlUrl">
+            <summary>Gets or sets the favorite url.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.HtmlUrl">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.IsComment">
+            <summary>IsComment is a string, either true or false, indicating whether the outline is commented or not. By convention if an outline is commented, all subordinate outlines are considered to be commented as well. If it's not present, the value is false.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.IsBreakpoint">
+            <summary>IsBreakpoint is a string, either true or false, indicating whether a breakpoint is set on this outline. This attribute is mainly necessary for outlines used to edit scripts that execute. If it's not present, the value is false.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Items">
+            <summary>OpmlOutline elements.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Created">
+            <summary>is the date-time that the outline node was created.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Category">
+            <summary>A string of comma-separated slash-delimited category strings, in the format defined by the RSS 2.0 category element. To represent a "tag," the category string should contain no slashes.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Language">
+            <summary> the value of the top-level language element. title is probably the same as text, it should not be omitted. title contains the top-level title element from the feed.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.IOpmlOutline.Version">
+            <summary>version varies depending on the version of RSS that's being supplied. It was invented at a time when we thought there might be some processors that only handled certain versions, but that hasn't turned out to be a major issue. The values it can have are: RSS1 for RSS 1.0; RSS for 0.91, 0.92 or 2.0; scriptingNews for scriptingNews format. There are no known values for Atom feeds, but they certainly could be provided.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.OpmlBody">
+            <summary>A body contains one or more outline elements</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlBody._items">
+            <summary>Items</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlBody._document">
+            <summary>the document that the body is assigned to.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlBody.#ctor">
+            <summary>Initializes a new instance of OpmlBody</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlBody.Document">
+            <summary>Gets the document that the body is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlBody.Raccoom#Xml#Opml#IOpmlBody#Document">
+            <summary>Gets the document that the outline is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlBody.Items">
+            <summary>OpmlOutline elements.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlBody.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.OpmlBody.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlBody.OnSubItemPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>A PropertyChanged event is raised when a sub property is changed. A PropertyChangedEventArgs object specifies the name of the property that changed.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.OpmlDocument">
+            <summary>OpmlOutline Processor Markup Language<para></para> Opml is an XML element, with a single required attribute, version; a head element and a body element, both of which are required. The version attribute is a version string, of the form, x.y, where x and y are both numeric strings.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlDocument._head">
+            <summary>OpmlHead</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlDocument._body">
+            <summary>OpmlBody</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlDocument._supressLastModifiedChanged">
+            <summary>supress flag for last modified changed property update during parsing</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlDocument._errors">
+            <summary>holds the parsing errors</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlDocument.#ctor">
+            <summary>Initializes a new instance of OpmlDocument with default values</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlDocument.Version">
+            <summary>
+            Internal property used to generate readonly attribute version
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlDocument.Head">
+            <summary>A head contains zero or more optional elements</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlDocument.Body">
+            <summary>A body contains one or more outline elements</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlDocument.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlDocument.SupressLastModifiedDate">
+            <summary>
+            Gets or sets the state of the supress flag during parsing the document
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlDocument.OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>A PropertyChanged event is raised when a property is changed on a component. A PropertyChangedEventArgs object specifies the name of the property that changed.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlDocument.OnSubItemPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>A PropertyChanged event is raised when a sub property is changed. A PropertyChangedEventArgs object specifies the name of the property that changed.</summary>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.OpmlDocument.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Opml.OpmlHead">
+            <summary>A head contains zero or more optional elements</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._title">
+            <summary>Title</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._dateCreated">
+            <summary>DateCreated</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._dateModified">
+            <summary>DateModified</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._ownerName">
+            <summary>OwnerName</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._ownerEmail">
+            <summary>OwnerEmail</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._expansionState">
+            <summary>ExpansionState</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._vertScrollState">
+            <summary>VertScrollState</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._windowTop">
+            <summary>WindowTop</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._windowLeft">
+            <summary>WindowLeft</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._windowBottom">
+            <summary>WindowBottom</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._windowRight">
+            <summary>WindowRight</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._ownerID">
+            <summary>is the http address of a web page that contains an HTML a form that allows a human reader to communicate with the author of the document via email or other means.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlHead._document">
+            <summary>the document that the head is assigned to.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlHead.#ctor">
+            <summary>Initializes a new instance of OpmlHead with default values</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.Document">
+            <summary>Gets the document that the head is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.Raccoom#Xml#Opml#IOpmlHead#Document">
+            <summary>Gets the document that the outline is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.Title">
+            <summary>The title of the document.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.DateCreated">
+            <summary>date-time, indicating when the document was created.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.DateCreatedRfc">
+            <summary>
+            Internal, gets the DateTime RFC822 format
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.DateModified">
+            <summary>Date-time, indicating when the document was last modified.</summary>
+            <remarks>DateModified is updated automatically every time the PropertyChanged event is fired.</remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.DateModifiedRfc">
+            <summary>
+            Internal, gets the DateTime RFC822 format
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.OwnerName">
+            <summary>the owner of the document.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.OwnerEmail">
+            <summary>the email address of the owner of the document.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.ExpansionState">
+            <summary>comma-separated list of line numbers that are expanded. The line numbers in the list tell you which headlines to expand. The order is important. For each element in the list, X, starting at the first summit, navigate flatdown X times and expand. Repeat for each element in the list</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.VertScrollState">
+            <summary>is a number, saying which line of the outline is displayed on the top line of the window. This number is calculated with the expansion state already applied.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.VertScrollStateSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.WindowTop">
+            <summary>is a number, the pixel location of the top edge of the window.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.WindowTopSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.WindowLeft">
+            <summary>is a number, the pixel location of the left edge of the window.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.WindowLeftSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.WindowBottom">
+            <summary>is a number, the pixel location of the bottom edge of the window</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.WindowBottomSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.WindowRight">
+            <summary>is a number, the pixel location of the right edge of the window</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlHead.WindowRightSpecified">
+            <summary>
+            Instructs the XmlSerializer whether or not to generate the XML element
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlHead.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.OpmlHead.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="T:Raccoom.Xml.Opml.OpmlOutlineCollection">
+            <summary>
+            <see cref="T:Raccoom.Xml.Opml.OpmlOutline"/> strong typed collecton.
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.#ctor">
+            <summary>Initializes a new instance of OpmlOutlineCollection</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.#ctor(Raccoom.Xml.Opml.OpmlBody)">
+            <summary>Initializes a new instance of OpmlOutlineCollection</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.#ctor(Raccoom.Xml.Opml.OpmlOutline)">
+            <summary>Initializes a new instance of OpmlOutlineCollection</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.Add(Raccoom.Xml.Opml.OpmlOutline)">
+            <summary>Adds an item to the IOpmlOutlineCollection.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.Remove(Raccoom.Xml.Opml.OpmlOutline)">
+            <summary>Removes an item to the OpmlOutlineCollection.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.Insert(System.Int32,Raccoom.Xml.Opml.OpmlOutline)">
+            <summary>Inserts an IOpmlOutline to the OpmlOutlineCollection at the specified position.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.Contains(Raccoom.Xml.Opml.OpmlOutline)">
+            <summary>Determines whether the OpmlOutlineCollection contains a specific value.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutlineCollection.Item(System.Int32)">
+            <summary>Gets the IOpmlOutline at the specified index.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.IndexOf(Raccoom.Xml.Opml.IOpmlOutline)">
+            <summary>Determines the index of a specific item i</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.CopyTo(Raccoom.Xml.Opml.IOpmlOutline[],System.Int32)">
+            <summary>Copies the elements of the Collection to an Array, starting at a particular Array index.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.OnInsertComplete(System.Int32,System.Object)">
+            <summary>
+            Performs additional custom processes
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.OnRemoveComplete(System.Int32,System.Object)">
+            <summary>
+            Performs additional custom processes
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutlineCollection.OnClear">
+            <summary>
+            Performs additional custom processes
+            </summary>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.OpmlOutline">
+            <summary>An outline is an XML element, possibly containing one or more attributes, and containing any number of outline sub-elements.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._text">
+            <summary>Text</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._type">
+            <summary>Type</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._description">
+            <summary>Description</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._xmlUrl">
+            <summary>XmlUrl</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._htmlUrl">
+            <summary>HtmlUrl</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._isComment">
+            <summary>IsComment</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._isBreakpoint">
+            <summary>IsBreakpoint</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._items">
+            <summary>Items</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._document">
+            <summary>the document that the outline is assigned to.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._outline">
+            <summary>the parent outline that the outline is assigned to.</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._created">
+            <summary>Date created</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._category">
+            <summary>categories</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._version">
+            <summary>version</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._language">
+            <summary>language</summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._inclusionDocument">
+            <summary>holds the associated inclusion document</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutline.#ctor">
+            <summary>Initializes a new instance of OpmlOutline with default values.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.IsInclusion">
+             <summary>
+            Determines if this outline contains an inclusion link
+             <br></br>
+            An outline element whose type is link must have a url attribute whose value is an http
+            address. The text element is, as usual, what's displayed in the outliner; it's also what is
+            displayed in an HTML rendering.
+            When a link element is expanded in an outliner, if the address ends with ".opml", the outline
+            expands in place. This is called inclusion.
+            If the address does not end with ".opml" the link is assumed to point to something that can be
+            displayed in a web browser.
+            In OPML 2.0 a new type is introduced. An outline element whose type is include must have a
+            url attribute that points to the OPML file to be included. The text attribute is, as usual, what's
+            displayed in the outliner, and it's also what is displayed in an HTML rendering.
+            The difference between link and include is that link may point to something that is displayed
+            in a web browser, and include always points to an OPML file.
+             </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Specified">
+            <summary>
+            Indicates if the instance is specified and contains valid data (Xml Serialisation)
+            </summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutline.Remove">
+            <summary>
+            Removes the current outline from the document.
+            </summary>
+            <remarks>
+            When the Remove method is called, the outline and any child outline items assigned to the document are removed from the document. The removed child outlines are removed from the document , but are still attached to this outline item.
+            </remarks>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Document">
+            <summary>Gets the document that the outline is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Raccoom#Xml#Opml#IOpmlOutline#Document">
+            <summary>Gets the document that the outline is assigned to.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutline.SetDocument(Raccoom.Xml.Opml.OpmlDocument)">
+            <summary>Sets the document that the outline is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Parent">
+            <summary>Gets the outline that this outline is assigned to.</summary>
+            <remarks>
+            If the outline is at the root level, the Parent property returns null. 
+            </remarks>		
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Raccoom#Xml#Opml#IOpmlOutline#Parent">
+            <summary>Gets the outline that this outline is assigned to.</summary>
+            <remarks>
+            If the outline is at the root level, the Parent property returns null. 
+            </remarks>		
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutline.SetParent(Raccoom.Xml.Opml.OpmlOutline)">
+            <summary>Sets the outline that this outline is assigned to.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Text">
+            <summary>Text is the string of characters that's displayed when the outline is being browsed or edited. There is no specific limit on the length of the text attribute.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Type">
+            <summary>Type is a string, it says how the other attributes of the outline are interpreted</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Description">
+            <summary></summary>
+        </member>
+        <member name="F:Raccoom.Xml.Opml.OpmlOutline._uri">
+            <summary>Gets or sets the favorite url.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Url">
+            <summary>When outline type is link url must have a value that is an http address.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.HtmlUrl">
+            <summary></summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.IsComment">
+            <summary>IsComment is a string, either true or false, indicating whether the outline is commented or not. By convention if an outline is commented, all subordinate outlines are considered to be commented as well. If it's not present, the value is false.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.IsBreakpoint">
+            <summary>IsBreakpoint is a string, either true or false, indicating whether a breakpoint is set on this outline. This attribute is mainly necessary for outlines used to edit scripts that execute. If it's not present, the value is false.</summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.LanguageIso">
+            <summary>
+            Internal, gets the CultureInfo ISO Code
+            </summary>
+        </member>
+        <member name="P:Raccoom.Xml.Opml.OpmlOutline.Items">
+            <summary>OpmlOutline elements.</summary>
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutline.ToString">
+            <summary>
+            Obtains the String representation of this instance. 
+            </summary>
+            <returns>The friendly name</returns>
+        </member>
+        <member name="T:Raccoom.Xml.Opml.OpmlOutline.Fields">
+            <summary>
+            public writeable class properties
+            </summary>		
+        </member>
+        <member name="M:Raccoom.Xml.Opml.OpmlOutline.OnSubItemPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>A PropertyChanged event is raised when a sub property is changed. A PropertyChangedEventArgs object specifies the name of the property that changed.</summary>
+        </member>
+    </members>
+</doc>

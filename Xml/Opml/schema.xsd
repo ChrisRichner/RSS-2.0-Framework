@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="opml" nillable="true" type="opml" />
+  <xs:complexType name="opml">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="head" type="OpmlHead" />
+      <xs:element minOccurs="0" maxOccurs="1" name="body" type="OpmlBody" />
+    </xs:sequence>
+    <xs:attribute name="version" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="OpmlHead">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="title" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="dateCreated" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="dateModified" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="ownerName" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="ownerEmail" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="expansionState" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="vertScrollState" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" name="windowTop" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" name="windowLeft" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" name="windowBottom" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" name="windowRight" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="OpmlBody">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="outline" type="outline" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="outline">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="outline" type="outline" />
+    </xs:sequence>
+    <xs:attribute name="text" type="xs:string" />
+    <xs:attribute name="type" type="xs:string" />
+    <xs:attribute name="description" type="xs:string" />
+    <xs:attribute name="xmlUrl" type="xs:anyURI" />
+    <xs:attribute name="htmlUrl" type="xs:anyURI" />
+    <xs:attribute name="isComment" type="xs:boolean" use="required" />
+    <xs:attribute name="isBreakpoint" type="xs:boolean" use="required" />
+  </xs:complexType>
+</xs:schema>

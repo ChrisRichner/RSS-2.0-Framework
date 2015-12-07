@@ -1,0 +1,43 @@
+﻿<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:my="clr-namespace:System;assembly=mscorlib" x:Class="Raccoom.Xml.DemoWPF.Window1"
+    Title="Raccoom.Xml.DemoWPF" Height="513" Width="604">
+  <Window.Resources>
+  <DataTemplate x:Key="RssTemplate">
+    <HeaderedItemsControl Header ="{Binding Path=Title}">
+		<Grid VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition />
+				<RowDefinition />				
+			</Grid.RowDefinitions>
+
+			<TextBlock Grid.Row="0" Text ="{Binding Path=Title}" FontWeight ="Bold" FontSize ="12">
+			</TextBlock>
+			<!--<Expander HorizontalAlignment ="Right">-->
+				<TextBlock Grid.Column="0" Grid.Row="1" Text ="{Binding Path=Description}" TextWrapping="Wrap" Width="Auto"/>
+			<!--</Expander>-->
+		</Grid>
+    </HeaderedItemsControl>
+  </DataTemplate>
+  </Window.Resources>  
+	<Window.Background>
+		<LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+			<GradientStop Color="#FF000000" Offset="0"/>
+			<GradientStop Color="#FFFFFFFF" Offset="1"/>
+		</LinearGradientBrush>
+	</Window.Background>  
+    <Grid>
+    	<Grid.ColumnDefinitions>
+    		<ColumnDefinition Width="0.35*"/>
+    		<ColumnDefinition Width="0.65*"/>
+    	</Grid.ColumnDefinitions>
+      <ListBox Name="listBox1" IsSynchronizedWithCurrentItem="False" RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased" Margin="8,8,5,8" Opacity="0.5" />
+    <ListBox Margin="10,8,8,8" Name="listBox2" ItemTemplate="{StaticResource RssTemplate}" ClipToBounds="True" Opacity="0.5" Grid.Column="1" />
+  </Grid>
+</Window>
